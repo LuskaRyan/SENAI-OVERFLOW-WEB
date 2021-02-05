@@ -11,7 +11,6 @@ export const Container = styled.div`
     border-radius: 3px;
     font-family: sans-serif;
   }
-
   > label {
     position: absolute;
     left: 10px;
@@ -20,20 +19,20 @@ export const Container = styled.div`
     align-items: center;
     color: var(--darkGray);
     cursor: text;
-
-    transition: 0.8 ease-in-out;
+    transition: 0.2s ease-in-out;
     pointer-events: none;
   }
-
   > input,
   > label {
     width: 100%;
     height: 30px;
     font-size: 16px;
   }
+
   > input:focus {
     border-bottom: 2px solid var(--primary);
   }
+
   > input:not(:placeholder-shown) + label,
   > input:focus + label {
     font-size: 14px;

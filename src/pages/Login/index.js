@@ -1,8 +1,9 @@
-import { Container, FormLogin, Header, Body } from "./styles";
-import Input from "../../components/input";
+import { Container, FormLogin, Header, Body, Button } from "./styles";
 import { Link, useHistory } from "react-router-dom";
 import { api } from "../../services/api";
 import { useState } from "react";
+import { signIn } from "../../services/security";
+import Input from "../../components/Input";
 
 function Login() {
   const history = useHistory();
@@ -13,20 +14,20 @@ function Login() {
   });
 
   const handleSubmit = async (e) => {
-    e.preventSDefault();
+    e.preventDefault();
 
     try {
       const response = await api.post("/sessions", login);
-      console.log(response.data);
-      
-      //implementar a autorizaçao
+
+      signIn(response.data);
 
       history.push("/home");
     } catch (error) {
-    console.error(error);
-    alert(error.response.data.error);
-  }
+      console.error(error);
+      alert(error.response.data.error);
+    }
   };
+
   const handleInput = (e) => {
     setLogin({ ...login, [e.target.id]: e.target.value });
   };
@@ -55,8 +56,8 @@ function Login() {
             handler={handleInput}
             required
           />
-          <button>Entrar</button>
-          <Link to="/register">Ou Clique aqui para se cadastrar</Link>
+          <Button>Entrar</Button>
+          <Link to="/register">Ou clique aqui para se cadastrar</Link>
         </Body>
       </FormLogin>
     </Container>

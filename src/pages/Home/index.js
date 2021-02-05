@@ -1,114 +1,165 @@
+import imgProfile from "../../assets/foto_perfil.png";
+import logo from "../../assets/logo.png";
+import { useEffect, useState } from "react";
+import { api } from "../../services/api";
+import { useHistory } from "react-router-dom";
+import { signOut } from "../../services/security";
 import {
   Container,
   Header,
   Content,
   ProfileContainer,
   FeedContainer,
-  ActionsContainer,
+  ActionContainer,
   QuestionCard,
   Logo,
-  IconSignOut
+  IconSignOut,
 } from "./styles";
-import imgProfile from "../../assets/foto_perfil.png";
-import logo from "../../assets/logo.png";
+
 function Profile() {
   return (
     <>
       <section>
-        <img src={imgProfile} />
-        <a href="#" />
+        <img src={imgProfile} alt="Imagem de perfil" />
+        <a href="#">Editar Foto</a>
       </section>
       <section>
         <strong>NOME:</strong>
-        <p>FULANO DE TAL</p>
+        <p>Fulano de Tal</p>
       </section>
       <section>
         <strong>RA:</strong>
-        <p>1903213</p>
+        <p>123456</p>
       </section>
       <section>
-        <strong>E-MAIL</strong>
-        <p>fulanodetal@outlook.com</p>
+        <strong>E-MAIL:</strong>
+        <p>fulano@gmail.com</p>
       </section>
     </>
   );
 }
+
+function Answer({ answer }) {
+  return (
+    <section>
+      <header>
+        <img src={imgProfile} alt="Imagem de perfil" />
+        <strong>Por {answer.Student.name}</strong>
+        <p>Em {answer.created_at}</p>
+      </header>
+      <p>{answer.description}</p>
+    </section>
+  );
+}
+
+function Question({ question }) {
+  const [showAnswer, setShowAnswer] = useState("");
+
+  const qtdAnswer = question.Answers.length;
+
+  return (
+    <QuestionCard>
+      <header>
+        <img src={imgProfile} alt="Imagem de perfil" />
+        <strong>Por {question.Student.name}</strong>
+        <p>Em {question.created_at}</p>
+      </header>
+      <section>
+        <strong>{question.title}</strong>
+        <p>{question.description}</p>
+        <img src={question.image} alt="Crhris" />
+      </section>
+      <footer>
+        <h1>
+          {qtdAnswer === 0 ? (
+            "Seja o primeiro a responder"
+          ) : (
+            <>
+              {qtdAnswer}
+              {qtdAnswer > 1 ? " Respostas" : " Resposta"}
+            </>
+          )}
+        </h1>
+        {question.Answers.map((answer) => (
+          <Answer answer={answer} />
+        ))}
+        <form>
+          <textarea
+            placeholder="Responda essa duvida!"
+            onChange={(e) => setShowAnswer(!showAnswer)}
+            required
+          ></textarea>
+          <button>Enviar</button>
+        </form>
+      </footer>
+    </QuestionCard>
+  );
+}
+
 function Home() {
+  const history = useHistory();
+
+  const [questions, setQuestions] = useState([]);
+
+  useEffect(() => {
+    const loadQuestions = async () => {
+      const response = await api.get("/feed");
+
+      setQuestions(response.data);
+    };
+
+    loadQuestions();
+  }, []);
+
+  const handleSignOut = () => {
+    signOut();
+
+    history.replace("/");
+  };
+
+  const [answer, setAnswer] = useState({
+    description: "",
+  });
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    try {
+      const { description } = answer;
+
+      const response = await api.post("/questions/:id/answers", {
+        description,
+      });
+
+      setAnswer(response.data);
+
+      console.log(response);
+
+      history.push("/home");
+    } catch (error) {
+      console.error(error);
+      alert(error.response.data.error);
+    }
+  };
+
   return (
     <Container>
       <Header>
         <Logo src={logo} />
-        <IconSignOut/>
+        <IconSignOut onClick={handleSignOut} />
       </Header>
       <Content>
         <ProfileContainer>
           <Profile />
         </ProfileContainer>
         <FeedContainer>
-          <QuestionCard>
-            <header>
-              <img src={imgProfile}></img>
-              <strong>Por: ciclano da silva</strong>
-              <p>Em: 12/12/2012 as 12:12</p>
-            </header>
-            <section>
-              <strong>Titulo</strong>
-              <p>DESCRICAO</p>
-              <img src="https://i.pinimg.com/originals/3f/c7/90/3fc7906b440c5e0de805647c302a7a01.jpg" />
-            </section>
-            <footer>
-              <h1>11 respostas</h1>
-              <section>
-                <header>
-                  <img src={imgProfile} />
-                  <strong>Por Fulano</strong>
-                  <p>12/12/2012 as 12:12</p>
-                </header>
-                <p>resposta para a pergunta</p>
-              </section>
-              <form>
-                <textarea
-                  placeholder="Responda essa duvida!"
-                  required
-                ></textarea>
-                <button>Enviar</button>
-              </form>
-            </footer>
-          </QuestionCard>
-          <QuestionCard>
-            <header>
-              <img src={imgProfile}></img>
-              <strong>Por: ciclano da silva</strong>
-              <p>Em: 12/12/2012 as 12:12</p>
-            </header>
-            <section>
-              <strong>Titulo</strong>
-              <p>DESCRICAO</p>
-              <img src="https://i.pinimg.com/originals/3f/c7/90/3fc7906b440c5e0de805647c302a7a01.jpg" />
-            </section>
-            <footer>
-              <h1>11 respostas</h1>
-              <section>
-                <header>
-                  <img src={imgProfile} />
-                  <strong>Por Fulano</strong>
-                  <p>12/12/2012 as 12:12</p>
-                </header>
-                <p>resposta para a pergunta</p>
-              </section>
-              <form>
-                <textarea
-                  placeholder="Responda essa duvida!"
-                  required
-                ></textarea>
-                <button>Enviar</button>
-              </form>
-            </footer>
-          </QuestionCard>
+          {questions.map((q) => (
+            <Question question={q} />
+          ))}
         </FeedContainer>
-        <ActionsContainer>
-          <button>FAZER UMA PERGUNTA</button>
-        </ActionsContainer>
+        <ActionContainer>
+          <button onSubmit={handleSubmit}>Fazer uma pergunta</button>
+        </ActionContainer>
       </Content>
     </Container>
   );

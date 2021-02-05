@@ -1,5 +1,5 @@
 import styled, { keyframes } from "styled-components";
-import bgImg from "../../assets/bg.jpg";
+import bgimg from "../../assets/bg.jpg";
 
 export const Container = styled.div`
   width: 100vw;
@@ -15,7 +15,7 @@ export const Container = styled.div`
     left: 0;
     width: 100%;
     height: 100%;
-    background-image: url(${bgImg});
+    background-image: url(${bgimg});
     background-repeat: no-repeat;
     background-size: cover;
     background-position: center top;
@@ -26,46 +26,41 @@ export const Container = styled.div`
 
 const loginAnimation = keyframes`
   0%{
-    top:-250px;
-    opacity:0;
-    transform:scale(.01) rotate(90deg);
+    top: -250px;
+    opacity: 0;
+    transform: scale(0.01) rotate(90deg);
   }
   100%{
-    top:0px;
-    opacity:1;
-    transform:scale(1) rotate(0deg);
+    top: 0px;
+    opacity: 1;
+    transform: scale(1) rotate(0deg);
   }
 `;
 
 export const FormLogin = styled.form`
   animation: ${loginAnimation} 0.5s;
   width: 30%;
+  min-width: 300px;
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: left;
-  text-align: center;
-  min-width: 300px;
-  max-width: 500px;
-  background-color: #282a36cc;
+  background-color: #282a36bb;
   border-radius: 4px;
-  box-shadow: 0px 0px 10px black;
-  overflow: hidden;
 `;
 
 export const Header = styled.header`
   width: 100%;
   padding: 20px;
-  border-radius: 4px 4px 0px 0px;
-  background-color: var(--dark);
+  border-radius: 5px 5px 0px 0px;
   box-shadow: 0px 2px 4px black;
+  background-color: var(--dark);
+  overflow: hidden;
 
   > h1 {
     font-size: 24px;
     text-align: center;
     margin-bottom: 10px;
   }
-
   > h2 {
     font-size: 18px;
     text-align: center;
@@ -73,12 +68,12 @@ export const Header = styled.header`
 `;
 
 export const Body = styled.section`
+  width: 100%;
   padding: 30px;
   padding-top: 10px;
   display: flex;
   flex-direction: column;
   gap: 10px;
-  width: 100%;
 `;
 
 export const Button = styled.button`
